@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Secure Crime Reporting System</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+<style>
+/* ══════════════════════════════════════════════════════
+   DESIGN TOKENS — Deep civic authority meets clean UX
+   Theme: Dark navy command centre + electric teal accent
+══════════════════════════════════════════════════════ */
+:root{
+  --bg:        #080d14;
+  --bg-2:      #0d1520;
+  --bg-3:      #111d2e;
+  --surface:   #0f1a28;
+  --surface-2: #152030;
+  --border:    #1a2d42;
+  --border-2:  #213650;
+  --teal:      #00c2a8;
+  --teal-2:    #00a88f;
+  --teal-dim:  rgba(0,194,168,.12);
+  --teal-glow: rgba(0,194,168,.25);
+  --red:       #f04f4f;
+  --red-dim:   rgba(240,79,79,.12);
+  --amber:     #f5a623;
+  --amber-dim: rgba(245,166,35,.12);
+  --green:     #22c55e;
+  --green-dim: rgba(34,197,94,.12);
+  --blue:      #3b9eff;
+  --blue-dim:  rgba(59,158,255,.12);
+  --purple:    #a78bfa;
+  --purple-dim:rgba(167,139,250,.12);
+  --text-1:    #e8f0f8;
+  --text-2:    #8ca3be;
+  --text-3:    #4a6480;
+  --sidebar-w: 256px;
+  --hdr-h:     60px;
+  --radius:    12px;
+  --radius-sm: 8px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text-1);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:4px}
+
+/* ── APP SHELL ── */
+#app{display:flex;min-height:100vh}
+
+/* ═══════════════════════════════════════
+   LOGIN PAGE
+═══════════════════════════════════════ */
+.login-wrap{
+  min-height:100vh;width:100%;display:flex;
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(0,194,168,.1) 0%,transparent 60%),
+             radial-gradient(ellipse 60% 40% at 80% 80%,rgba(59,158,255,.07) 0%,transparent 60%),
+             var(--bg);
+}
+.login-visual{
+  flex:1;display:none;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#0a1628 0%,#0d1f35 100%);
+  border-right:1px solid var(--border);
+}
+@media(min-width:1024px){.login-visual{display:block}}
+.login-visual-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(0,194,168,.08) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(0,194,168,.08) 1px,transparent 1px);
+  background-size:50px 50px;
+}
+.login-visual-inner{position:relative;z-index:1;padding:60px;height:100%;display:flex;flex-direction:column;justify-content:center}
+.login-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(0,194,168,.1);border:1px solid rgba(0,194,168,.25);
+  border-radius:100px;padding:8px 16px;margin-bottom:48px;width:fit-content;
+}
+.login-badge span{font-size:12px;font-weight:700;color:var(--teal);letter-spacing:.8px;text-transform:uppercase}
+.login-visual h1{font-size:42px;font-weight:800;line-height:1.15;color:var(--text-1)}
+.login-visual h1 em{font-style:normal;color:var(--teal)}
+.login-visual p{margin-top:18px;font-size:15px;color:var(--text-2);line-height:1.75;max-width:400px}
+.login-features{margin-top:52px;display:flex;flex-direction:column;gap:18px}
+.feat-row{display:flex;align-items:center;gap:14px}
+.feat-icon{width:38px;height:38px;border-radius:10px;background:rgba(0,194,168,.1);border:1px solid rgba(0,194,168,.2);display:flex;align-items:center;justify-content:center;color:var(--teal);font-size:17px;flex-shrink:0}
+.feat-text strong{display:block;font-size:13.5px;font-weight:600;color:var(--text-1)}
+.feat-text span{font-size:12px;color:var(--text-3)}
+
+/* Login right panel */
+.login-panel{
+  width:100%;max-width:520px;margin:auto;
+  padding:48px 40px;display:flex;flex-direction:column;justify-content:center;min-height:100vh
+}
+@media(max-width:1023px){.login-panel{max-width:100%;padding:32px 24px}}
+
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:40px}
+.logo-shield{
+  width:42px;height:42px;background:linear-gradient(135deg,var(--teal),var(--teal-2));
+  border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:20px;color:#fff;flex-shrink:0;box-shadow:0 4px 16px var(--teal-glow)
+}
+.logo-name{font-size:14px;font-weight:800;color:var(--text-1);letter-spacing:.3px;line-height:1.2}
+.logo-tag{font-size:10.5px;color:var(--text-3);font-weight:400}
+
+/* Slider toggle */
+.portal-toggle{
+  display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);
+  border-radius:100px;padding:4px;margin-bottom:36px;position:relative
+}
+.portal-btn{
+  flex:1;padding:10px;font-size:13px;font-weight:600;border:none;cursor:pointer;
+  border-radius:100px;background:transparent;color:var(--text-3);
+  transition:color .25s;display:flex;align-items:center;justify-content:center;gap:7px;
+  position:relative;z-index:1
+}
+.portal-btn.active{color:var(--bg)}
+.portal-slider{
+  position:absolute;top:4px;left:4px;height:calc(100% - 8px);
+  border-radius:100px;background:var(--teal);
+  transition:transform .3s cubic-bezier(.4,0,.2,1),width .3s ease;
+  box-shadow:0 2px 12px var(--teal-glow)
+}
+.portal-btn:not(.active){transition:color .25s}
+.portal-btn.active{color:var(--bg)!important}
+
+.login-title{font-size:24px;font-weight:800;margin-bottom:6px}
+.login-sub{font-size:14px;color:var(--text-3);margin-bottom:32px}
+
+/* Form */
+.field-label{font-size:11.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px;display:block}
+.field{background:var(--surface);border:1.5px solid var(--border);color:var(--text-1)!important;border-radius:var(--radius-sm);font-size:14px;padding:11px 14px;width:100%;font-family:'Plus Jakarta Sans',sans-serif;transition:border-color .2s,box-shadow .2s;outline:none}
+.field::placeholder{color:var(--text-3)!important}
+.field:focus{border-color:var(--teal)!important;box-shadow:0 0 0 3px var(--teal-glow)!important}
+.field-wrap{position:relative}
+.field-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:16px;pointer-events:none}
+.field.has-icon{padding-left:40px}
+.field-eye{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:16px;background:none;border:none;cursor:pointer;padding:4px}
+.field-eye:hover{color:var(--text-1)}
+
+.btn-primary{width:100%;padding:13px;background:var(--teal);color:var(--bg);font-weight:700;font-size:14px;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Plus Jakarta Sans',sans-serif}
+.btn-primary:hover{background:var(--teal-2);box-shadow:0 4px 20px var(--teal-glow);transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.6;cursor:default;transform:none}
+
+.anon-note{background:var(--amber-dim);border:1px solid rgba(245,166,35,.25);border-radius:var(--radius-sm);padding:12px 14px;display:flex;gap:10px;align-items:flex-start;margin-bottom:24px}
+.anon-note i{color:var(--amber);font-size:16px;flex-shrink:0;margin-top:1px}
+.anon-note p{font-size:12.5px;color:var(--text-2);margin:0;line-height:1.6}
+
+.demo-box{margin-top:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px}
+.demo-box-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--teal);font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.demo-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)}
+.demo-row:last-child{border:0}
+.demo-lbl{font-size:12px;color:var(--text-3)}
+.demo-val{font-family:'Instrument Mono',monospace;font-size:12px;color:var(--text-1)}
+.demo-use{background:none;border:1px solid var(--border-2);border-radius:5px;color:var(--teal);font-size:11px;padding:2px 10px;cursor:pointer;transition:background .2s}
+.demo-use:hover{background:var(--teal-dim)}
+
+.err-msg{background:var(--red-dim);border:1px solid rgba(240,79,79,.3);border-radius:var(--radius-sm);padding:11px 14px;font-size:13px;color:#fda4a4;display:flex;align-items:center;gap:9px;margin-bottom:16px}
+
+/* ═══════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════ */
+.sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);
+  background:var(--bg-2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;height:100vh;z-index:200;
+  transition:transform .3s cubic-bezier(.4,0,.2,1)
+}
+.sidebar-head{
+  height:var(--hdr-h);display:flex;align-items:center;gap:11px;
+  padding:0 20px;border-bottom:1px solid var(--border);flex-shrink:0
+}
+.sidebar-portal-pill{
+  margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  padding:3px 9px;border-radius:100px
+}
+.pill-citizen{background:var(--teal-dim);color:var(--teal)}
+.pill-officer{background:var(--blue-dim);color:var(--blue)}
+
+.sidebar-body{flex:1;overflow-y:auto;padding:16px 0}
+.nav-section{font-size:9.5px;text-transform:uppercase;letter-spacing:1.8px;color:var(--text-3);padding:14px 20px 6px;font-weight:700}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:10px 18px;
+  font-size:13.5px;font-weight:500;color:var(--text-2);cursor:pointer;
+  border-left:3px solid transparent;transition:all .15s;position:relative;
+  margin:1px 0;border-radius:0 8px 8px 0;margin-right:8px
+}
+.nav-item:hover{color:var(--text-1);background:rgba(255,255,255,.04)}
+.nav-item.active{
+  color:var(--teal);background:var(--teal-dim);border-left-color:var(--teal)
+}
+.nav-item i{font-size:17px;width:22px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px;font-family:'Instrument Mono',monospace}
+
+.sidebar-foot{
+  border-top:1px solid var(--border);padding:16px 20px;flex-shrink:0
+}
+.user-card{display:flex;align-items:center;gap:10px}
+.u-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--teal),var(--teal-2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#fff;flex-shrink:0
+}
+.u-avatar.officer{background:linear-gradient(135deg,var(--blue),#2563eb)}
+.u-avatar.sm{width:28px;height:28px;font-size:10px}
+.u-name{font-size:12.5px;font-weight:600;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
+.u-role{font-size:11px;color:var(--text-3)}
+.btn-logout{margin-left:auto;background:none;border:none;color:var(--text-3);font-size:17px;cursor:pointer;padding:4px;border-radius:6px;transition:color .2s}
+.btn-logout:hover{color:var(--red)}
+
+/* ═══════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════ */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{
+  height:var(--hdr-h);background:var(--bg-2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 28px;gap:14px;
+  position:sticky;top:0;z-index:100;flex-shrink:0
+}
+.topbar-title{font-size:17px;font-weight:700;flex:1}
+.topbar-sub{font-size:11.5px;color:var(--text-3);margin-top:1px}
+.btn-ham{display:none;background:none;border:none;color:var(--text-2);font-size:22px;cursor:pointer}
+.page{flex:1;padding:28px}
+
+/* ─ Sidebar overlay mobile ─ */
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:199}
+
+/* ═══════════════════════════════════════
+   CARDS & SURFACES
+═══════════════════════════════════════ */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.card-hd{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.card-hd-title{font-size:14px;font-weight:700;color:var(--text-1)}
+.card-bd{padding:20px}
+
+/* ─ Stat cards ─ */
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s}
+.stat-card:hover{border-color:var(--border-2);transform:translateY(-2px)}
+.stat-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.02),transparent 60%);pointer-events:none}
+.stat-ic{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px}
+.stat-val{font-size:32px;font-weight:800;font-family:'Instrument Mono',monospace;line-height:1}
+.stat-lbl{font-size:11.5px;color:var(--text-3);margin-top:6px;text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+
+.ic-teal  {background:var(--teal-dim);color:var(--teal)}
+.ic-red   {background:var(--red-dim);color:var(--red)}
+.ic-amber {background:var(--amber-dim);color:var(--amber)}
+.ic-green {background:var(--green-dim);color:var(--green)}
+.ic-blue  {background:var(--blue-dim);color:var(--blue)}
+.ic-purple{background:var(--purple-dim);color:var(--purple)}
+
+/* ─ Table ─ */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{background:rgba(255,255,255,.03);font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:var(--text-3);padding:12px 16px;border-bottom:1px solid var(--border);font-weight:700;white-space:nowrap}
+.tbl td{padding:13px 16px;font-size:13px;border-bottom:1px solid var(--border);color:var(--text-2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tbody tr{transition:background .12s;cursor:pointer}
+.tbl tbody tr:hover{background:rgba(255,255,255,.03)}
+.td-main{color:var(--text-1);font-weight:500}
+
+/* ─ Badges ─ */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;white-space:nowrap;letter-spacing:.2px}
+.bdot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.b-pending  {background:var(--amber-dim);color:var(--amber)}
+.b-review   {background:var(--blue-dim);color:var(--blue)}
+.b-resolved {background:var(--green-dim);color:var(--green)}
+.b-dismissed{background:rgba(148,163,184,.1);color:var(--text-3)}
+.b-low      {background:var(--green-dim);color:var(--green)}
+.b-medium   {background:var(--blue-dim);color:var(--blue)}
+.b-high     {background:var(--amber-dim);color:var(--amber)}
+.b-critical {background:var(--red-dim);color:var(--red)}
+.b-active   {background:var(--red-dim);color:var(--red)}
+.b-teal     {background:var(--teal-dim);color:var(--teal)}
+.b-anon     {background:var(--purple-dim);color:var(--purple)}
+
+/* ─ Ref chip ─ */
+.ref-chip{font-family:'Instrument Mono',monospace;font-size:11.5px;color:var(--teal);background:var(--teal-dim);border:1px solid rgba(0,194,168,.2);border-radius:5px;padding:2px 8px}
+
+/* ─ Buttons ─ */
+.btn{border-radius:var(--radius-sm);font-size:13px;font-weight:600;padding:9px 18px;border:none;display:inline-flex;align-items:center;gap:7px;cursor:pointer;transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif}
+.btn-sm{padding:6px 14px;font-size:12px}
+.btn-xs{padding:4px 10px;font-size:11.5px;border-radius:6px}
+.btn-teal{background:var(--teal);color:var(--bg)}
+.btn-teal:hover{background:var(--teal-2);box-shadow:0 3px 14px var(--teal-glow);transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,.06);color:var(--text-2);border:1px solid var(--border)}
+.btn-ghost:hover{background:rgba(255,255,255,.1);color:var(--text-1)}
+.btn-danger{background:var(--red-dim);color:var(--red);border:1px solid rgba(240,79,79,.3)}
+.btn-danger:hover{background:rgba(240,79,79,.25)}
+.btn-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,.3)}
+.btn-green:hover{background:rgba(34,197,94,.25)}
+.btn-outline{background:transparent;border:1px solid var(--border-2);color:var(--text-2)}
+.btn-outline:hover{background:rgba(255,255,255,.04);color:var(--text-1)}
+
+/* ─ Forms ─ */
+.form-lbl{font-size:11.5px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:7px;display:block}
+.form-ctrl{background:var(--surface-2);border:1.5px solid var(--border);color:var(--text-1)!important;border-radius:var(--radius-sm);font-size:13.5px;padding:10px 13px;width:100%;font-family:'Plus Jakarta Sans',sans-serif;transition:border-color .2s,box-shadow .2s;outline:none}
+.form-ctrl::placeholder{color:var(--text-3)!important}
+.form-ctrl:focus{border-color:var(--teal)!important;box-shadow:0 0 0 3px var(--teal-glow)!important}
+.form-ctrl select,.form-ctrl option{background:var(--surface-2)}
+select.form-ctrl option{background:var(--bg-3)}
+textarea.form-ctrl{resize:vertical;min-height:110px}
+
+/* ─ Search bar ─ */
+.srch-wrap{position:relative}
+.srch-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:16px;pointer-events:none}
+.srch-wrap .form-ctrl{padding-left:40px}
+
+/* ─ Filter row ─ */
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.filter-row select.form-ctrl{max-width:160px;padding:8px 12px;font-size:12.5px}
+
+/* ─ Modals ─ */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:900;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--bg-2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
+.modal.lg{max-width:760px}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:16px;font-weight:700}
+.modal-close{background:none;border:none;color:var(--text-3);font-size:20px;cursor:pointer;padding:4px;border-radius:6px}
+.modal-close:hover{color:var(--text-1)}
+.modal-bd{padding:24px}
+.modal-ft{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);border-bottom:0}
+
+/* ─ Empty state ─ */
+.empty{text-align:center;padding:56px 20px;color:var(--text-3)}
+.empty i{font-size:48px;display:block;margin-bottom:14px;opacity:.4}
+.empty p{font-size:14px}
+
+/* ─ Spinner ─ */
+.spin{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.15);border-top-color:currentColor;border-radius:50%;animation:spinning .65s linear infinite}
+.spin.sm{width:14px;height:14px}
+@keyframes spinning{to{transform:rotate(360deg)}}
+.loading-wrap{display:flex;align-items:center;justify-content:center;padding:60px}
+
+/* ─ Toast ─ */
+.toast-stack{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px}
+.toast{background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:13px 17px;display:flex;align-items:center;gap:12px;min-width:280px;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.5);font-size:13.5px;animation:tslide .3s ease}
+.toast.success{border-left:3px solid var(--green)}
+.toast.error  {border-left:3px solid var(--red)}
+.toast.info   {border-left:3px solid var(--blue)}
+.toast i{font-size:18px}
+.toast.success i{color:var(--green)}
+.toast.error   i{color:var(--red)}
+.toast.info    i{color:var(--blue)}
+@keyframes tslide{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+
+/* ─ Pagination ─ */
+.pager{display:flex;align-items:center;gap:6px;padding:16px 20px;border-top:1px solid var(--border)}
+.pg-btn{width:32px;height:32px;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-2);font-size:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .13s}
+.pg-btn:hover:not(:disabled){background:var(--teal-dim);border-color:var(--teal);color:var(--teal)}
+.pg-btn.on{background:var(--teal);border-color:var(--teal);color:var(--bg);font-weight:700}
+.pg-btn:disabled{opacity:.35;cursor:default}
+.pg-info{font-size:12px;color:var(--text-3);margin-left:auto}
+
+/* ─ Bar chart mini ─ */
+.bar-chart{display:flex;flex-direction:column;gap:9px}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-lbl{width:100px;font-size:12px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+.bar-track{flex:1;height:7px;background:var(--border);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .7s cubic-bezier(.4,0,.2,1)}
+.bar-num{width:30px;font-size:12px;color:var(--text-2);text-align:right;font-family:'Instrument Mono',monospace;flex-shrink:0}
+
+/* ─ Trend bars ─ */
+.trend-chart{display:flex;align-items:flex-end;gap:8px;height:90px;padding:0 2px}
+.trend-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.trend-bar-wrap{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center}
+.trend-bar{width:70%;border-radius:4px 4px 0 0;min-height:4px;transition:height .7s ease;opacity:.85}
+.trend-lbl{font-size:10px;color:var(--text-3);white-space:nowrap}
+
+/* ─ Donut ─ */
+.donut-wrap{position:relative;width:120px;height:120px;margin:auto}
+.donut-svg{transform:rotate(-90deg)}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.donut-val{font-size:22px;font-weight:800;font-family:'Instrument Mono',monospace}
+.donut-sub{font-size:10px;color:var(--text-3)}
+.legend-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-2);padding:4px 0}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+
+/* ─ SOS ─ */
+.sos-btn{
+  width:100%;padding:20px;border-radius:14px;background:var(--red-dim);
+  border:2px solid rgba(240,79,79,.4);color:var(--red);font-size:22px;font-weight:800;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:14px;
+  transition:all .2s;letter-spacing:.5px;font-family:'Plus Jakarta Sans',sans-serif
+}
+.sos-btn:hover{background:rgba(240,79,79,.22);box-shadow:0 0 40px rgba(240,79,79,.3);transform:scale(1.01)}
+.sos-btn.pressed{background:var(--red);color:#fff;box-shadow:0 0 60px rgba(240,79,79,.5)}
+.sos-pulse{width:80px;height:80px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:36px;color:#fff;animation:pulse-ring 2s ease-out infinite;flex-shrink:0}
+@keyframes pulse-ring{
+  0%{box-shadow:0 0 0 0 rgba(240,79,79,.7)}
+  70%{box-shadow:0 0 0 20px rgba(240,79,79,0)}
+  100%{box-shadow:0 0 0 0 rgba(240,79,79,0)}
+}
+
+/* ─ Safety tips ─ */
+.tip-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;gap:14px;transition:border-color .2s}
+.tip-card:hover{border-color:var(--border-2)}
+.tip-icon{width:42px;height:42px;border-radius:10px;background:var(--teal-dim);border:1px solid rgba(0,194,168,.2);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--teal);flex-shrink:0}
+.tip-cat-btn{padding:8px 16px;border-radius:100px;font-size:12.5px;font-weight:600;border:1px solid var(--border);background:transparent;color:var(--text-2);cursor:pointer;transition:all .15s}
+.tip-cat-btn.active{background:var(--teal-dim);border-color:rgba(0,194,168,.3);color:var(--teal)}
+
+/* ─ Timeline ─ */
+.timeline{position:relative;padding-left:26px}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--border)}
+.tl-item{position:relative;padding-bottom:18px}
+.tl-dot{position:absolute;left:-23px;top:3px;width:12px;height:12px;border-radius:50%;border:2px solid var(--bg-2);background:var(--teal)}
+.tl-time{font-size:11px;color:var(--text-3);font-family:'Instrument Mono',monospace}
+.tl-text{font-size:13px;color:var(--text-2);margin-top:3px}
+
+/* ─ Analytics charts ─ */
+.hourly-bars{display:flex;align-items:flex-end;gap:3px;height:70px}
+.hr-bar{flex:1;border-radius:3px 3px 0 0;min-height:3px;transition:height .5s ease;background:var(--teal);opacity:.7;cursor:pointer}
+.hr-bar:hover{opacity:1}
+.hr-lbl{flex:1;font-size:8.5px;color:var(--text-3);text-align:center}
+.perf-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.perf-row:last-child{border:0}
+.perf-name{flex:1;font-size:13px;font-weight:500;color:var(--text-1)}
+.perf-sub{font-size:11px;color:var(--text-3)}
+.perf-stat{font-size:13px;font-weight:600;font-family:'Instrument Mono',monospace;text-align:right;min-width:40px}
+
+/* ─ Divider ─ */
+hr.div{border:none;border-top:1px solid var(--border);margin:20px 0}
+
+/* ─ Utility ─ */
+.mono{font-family:'Instrument Mono',monospace}
+.text-teal{color:var(--teal)}
+.gap-8{gap:8px!important}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+@media(max-width:991px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .mob-overlay{display:block}
+  .main{margin-left:0}
+  .btn-ham{display:flex}
+  .page{padding:16px}
+  .topbar{padding:0 16px}
+}
+@media(max-width:575px){
+  .filter-row select.form-ctrl{max-width:120px;font-size:12px}
+  .stat-val{font-size:26px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ═══════════════════════════════════════════════════════════════
+     LOGIN PAGE
+═══════════════════════════════════════════════════════════════════ -->
+<div v-if="!session.token" class="login-wrap">
+  <!-- Visual panel -->
+  <div class="login-visual">
+    <div class="login-visual-grid"></div>
+    <div class="login-visual-inner">
+      <div class="login-badge">
+        <i class="bi bi-shield-lock-fill" style="color:var(--teal);font-size:15px;"></i>
+        <span>Secure System</span>
+      </div>
+      <h1>Kenya<br/><em>Crime</em><br/>Reporting Portal</h1>
+      <p>A secure, modern platform connecting citizens and law enforcement for faster, smarter crime response across the country.</p>
+      <div class="login-features">
+        <div class="feat-row"><div class="feat-icon"><i class="bi bi-person-badge-fill"></i></div><div class="feat-text"><strong>Citizen Reporting</strong><span>Report crimes with your ID or anonymously</span></div></div>
+        <div class="feat-row"><div class="feat-icon"><i class="bi bi-incognito"></i></div><div class="feat-text"><strong>Anonymous Mode</strong><span>Full privacy protection for sensitive cases</span></div></div>
+        <div class="feat-row"><div class="feat-icon"><i class="bi bi-shield-check"></i></div><div class="feat-text"><strong>Officer Dashboard</strong><span>Case management & real-time analytics</span></div></div>
+        <div class="feat-row"><div class="feat-icon"><i class="bi bi-exclamation-triangle-fill"></i></div><div class="feat-text"><strong>SOS Emergency Alert</strong><span>Instant emergency notification to officers</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login panel -->
+  <div class="login-panel">
+    <div class="login-logo">
+      <div class="logo-shield"><i class="bi bi-shield-fill-check"></i></div>
+      <div><div class="logo-name">CRIME PORTAL</div><div class="logo-tag">Kenya Police Service</div></div>
+    </div>
+
+    <!-- Portal toggle slider -->
+    <div class="portal-toggle" ref="toggleRef">
+      <div class="portal-slider" :style="sliderStyle"></div>
+      <button class="portal-btn" :class="{active:loginMode==='citizen'}" @click="setMode('citizen')">
+        <i class="bi bi-person-fill"></i> Citizen
+      </button>
+      <button class="portal-btn" :class="{active:loginMode==='officer'}" @click="setMode('officer')">
+        <i class="bi bi-shield-fill"></i> Officer
+      </button>
+    </div>
+
+    <!-- CITIZEN LOGIN -->
+    <div v-if="loginMode==='citizen'">
+      <div class="login-title">Citizen Access</div>
+      <div class="login-sub">Enter your National ID to access your account</div>
+      <div v-if="loginError" class="err-msg"><i class="bi bi-exclamation-triangle-fill"></i>{{loginError}}</div>
+      <div class="mb-3">
+        <label class="field-label">National ID Number</label>
+        <div class="field-wrap">
+          <i class="bi bi-person-vcard field-icon"></i>
+          <input v-model="loginForm.national_id" class="field has-icon" placeholder="e.g. 30012345" @keyup.enter="doLogin"/>
+        </div>
+      </div>
+      <button @click="doLogin" class="btn-primary" :disabled="loginLoading" style="margin-bottom:20px">
+        <span v-if="loginLoading" class="spin sm"></span>
+        <i v-else class="bi bi-box-arrow-in-right"></i>
+        {{loginLoading?'Verifying...':'Access My Account'}}
+      </button>
+      <div class="anon-note">
+        <i class="bi bi-incognito"></i>
+        <p>Want to report without logging in? <a @click="goAnonymous" style="color:var(--teal);cursor:pointer;font-weight:600;">Click here to report anonymously</a> — no ID required.</p>
+      </div>
+      <div class="demo-box">
+        <div class="demo-box-title"><i class="bi bi-info-circle"></i>Demo Citizens</div>
+        <div class="demo-row" v-for="c in demoCitizens" :key="c.id">
+          <span class="demo-lbl">{{c.name}}</span>
+          <span class="demo-val">{{c.id}}</span>
+          <button class="demo-use" @click="loginForm.national_id=c.id">Use</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- OFFICER LOGIN -->
+    <div v-if="loginMode==='officer'">
+      <div class="login-title">Officer Login</div>
+      <div class="login-sub">Sign in with your Officer ID and password</div>
+      <div v-if="loginError" class="err-msg"><i class="bi bi-exclamation-triangle-fill"></i>{{loginError}}</div>
+      <div class="mb-3">
+        <label class="field-label">Officer ID</label>
+        <div class="field-wrap">
+          <i class="bi bi-shield field-icon"></i>
+          <input v-model="loginForm.officer_id" class="field has-icon" placeholder="e.g. OFC-001" @keyup.enter="doLogin"/>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="field-label">Password</label>
+        <div class="field-wrap">
+          <i class="bi bi-lock field-icon"></i>
+          <input v-model="loginForm.password" :type="showPw?'text':'password'" class="field has-icon" placeholder="••••••••" @keyup.enter="doLogin"/>
+          <button class="field-eye" @click="showPw=!showPw"><i :class="showPw?'bi bi-eye-slash':'bi bi-eye'"></i></button>
+        </div>
+      </div>
+      <button @click="doLogin" class="btn-primary" :disabled="loginLoading">
+        <span v-if="loginLoading" class="spin sm"></span>
+        <i v-else class="bi bi-shield-lock"></i>
+        {{loginLoading?'Authenticating...':'Sign In'}}
+      </button>
+      <div class="demo-box mt-4">
+        <div class="demo-box-title"><i class="bi bi-info-circle"></i>Demo Officers — Password: Officer123!</div>
+        <div class="demo-row" v-for="o in demoOfficers" :key="o.id">
+          <span class="demo-lbl">{{o.name}}</span>
+          <span class="demo-val">{{o.id}}</span>
+          <button class="demo-use" @click="loginForm.officer_id=o.id;loginForm.password='Officer123!'">Use</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ANONYMOUS REPORT PAGE (no login)
+═══════════════════════════════════════════════════════════════════ -->
+<div v-else-if="anonMode" class="login-wrap" style="align-items:flex-start;overflow-y:auto;">
+  <div style="max-width:640px;width:100%;margin:auto;padding:40px 24px 80px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:32px;">
+      <div class="logo-shield"><i class="bi bi-shield-fill-check"></i></div>
+      <div><div style="font-size:14px;font-weight:800;">CRIME PORTAL</div><div style="font-size:11px;color:var(--text-3);">Anonymous Report</div></div>
+      <button class="btn btn-ghost btn-sm ms-auto" @click="anonMode=false;session.token=null"><i class="bi bi-arrow-left"></i> Back</button>
+    </div>
+    <div v-if="!anonSuccess">
+      <div class="mb-2" style="font-size:22px;font-weight:800;">Report Anonymously</div>
+      <p style="color:var(--text-3);margin-bottom:24px;">Your identity is fully protected. No login or ID required. Your location data is never stored.</p>
+      <div class="anon-note mb-4"><i class="bi bi-incognito"></i><p>This report will be completely anonymous. Even officers cannot see who submitted it.</p></div>
+      <div v-if="anonError" class="err-msg mb-3"><i class="bi bi-exclamation-triangle-fill"></i>{{anonError}}</div>
+      <div class="card">
+        <div class="card-bd">
+          <div class="row g-3">
+            <div class="col-12"><label class="form-lbl">What crime are you reporting? *</label><select v-model="anonForm.crime_type" class="form-ctrl" style="width:100%"><option value="">— Select crime type —</option><option v-for="c in crimeTypes" :key="c">{{c}}</option></select></div>
+            <div class="col-md-6"><label class="form-lbl">County</label><select v-model="anonForm.county" class="form-ctrl" style="width:100%"><option value="">— County —</option><option v-for="c in counties" :key="c">{{c}}</option></select></div>
+            <div class="col-md-6"><label class="form-lbl">Specific Location</label><input v-model="anonForm.location" class="form-ctrl" placeholder="Street / area name"/></div>
+            <div class="col-md-6"><label class="form-lbl">Date of Incident</label><input v-model="anonForm.incident_date" type="date" class="form-ctrl" :max="today"/></div>
+            <div class="col-md-6"><label class="form-lbl">Time (approx.)</label><input v-model="anonForm.incident_time" type="time" class="form-ctrl"/></div>
+            <div class="col-12"><label class="form-lbl">Describe what happened *</label><textarea v-model="anonForm.description" class="form-ctrl" placeholder="Provide as much detail as possible about the incident, perpetrators, and any other relevant information..." style="min-height:150px;"></textarea></div>
+            <div class="col-12"><label class="form-lbl">Suspect Information (optional)</label><textarea v-model="anonForm.suspect_info" class="form-ctrl" placeholder="Physical description, vehicle, known name..." style="min-height:80px;"></textarea></div>
+            <div class="col-12"><label class="form-lbl">Witness Information (optional)</label><textarea v-model="anonForm.witness_info" class="form-ctrl" placeholder="Any witnesses you are aware of..." style="min-height:80px;"></textarea></div>
+            <div class="col-12">
+              <button class="btn btn-teal w-100" style="padding:13px;justify-content:center;" @click="submitAnon" :disabled="anonLoading">
+                <span v-if="anonLoading" class="spin sm"></span>
+                <i v-else class="bi bi-incognito"></i>
+                {{anonLoading?'Submitting...':'Submit Anonymous Report'}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-else class="card" style="text-align:center;padding:48px 24px;">
+      <i class="bi bi-check-circle-fill" style="font-size:56px;color:var(--green);display:block;margin-bottom:16px;"></i>
+      <div style="font-size:22px;font-weight:800;margin-bottom:8px;">Report Submitted!</div>
+      <p style="color:var(--text-3);margin-bottom:20px;">Your anonymous report has been received. Officers will review it shortly.</p>
+      <div style="background:var(--teal-dim);border:1px solid rgba(0,194,168,.2);border-radius:10px;padding:16px;display:inline-block;margin-bottom:24px;">
+        <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Reference Number</div>
+        <div class="mono" style="font-size:22px;color:var(--teal);font-weight:700;">{{anonRefNum}}</div>
+        <div style="font-size:12px;color:var(--text-3);margin-top:6px;">Save this number to follow up</div>
+      </div>
+      <button class="btn btn-teal mx-auto" style="justify-content:center;" @click="resetAnon"><i class="bi bi-plus-lg"></i> Submit Another</button>
+      <div class="mt-3"><a @click="anonMode=false;session.token=null" style="color:var(--text-3);cursor:pointer;font-size:13px;">← Back to Login</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MAIN APP (logged in)
+═══════════════════════════════════════════════════════════════════ -->
+<template v-else>
+  <div v-if="sidebarOpen && isMobile" class="mob-overlay" @click="sidebarOpen=false"></div>
+
+  <!-- SIDEBAR -->
+  <aside :class="['sidebar',{open:sidebarOpen}]">
+    <div class="sidebar-head">
+      <div class="logo-shield" style="width:32px;height:32px;font-size:16px;"><i class="bi bi-shield-fill-check"></i></div>
+      <div style="font-size:12.5px;font-weight:800;">CRIME PORTAL</div>
+      <span class="sidebar-portal-pill" :class="session.role==='citizen'?'pill-citizen':'pill-officer'">{{session.role}}</span>
+    </div>
+
+    <nav class="sidebar-body">
+      <!-- CITIZEN NAV -->
+      <template v-if="session.role==='citizen'">
+        <div class="nav-section">Overview</div>
+        <div class="nav-item" :class="{active:page==='citizen-dashboard'}" @click="nav('citizen-dashboard')"><i class="bi bi-grid-fill"></i>Dashboard</div>
+        <div class="nav-section">Report Crime</div>
+        <div class="nav-item" :class="{active:page==='report-named'}" @click="nav('report-named')"><i class="bi bi-file-earmark-text-fill"></i>Report (Named)</div>
+        <div class="nav-item" :class="{active:page==='report-anonymous'}" @click="nav('report-anonymous')"><i class="bi bi-incognito"></i>Report Anonymously</div>
+        <div class="nav-item" :class="{active:page==='my-reports'}" @click="nav('my-reports')"><i class="bi bi-folder2-open"></i>My Reports</div>
+        <div class="nav-section">Safety</div>
+        <div class="nav-item" :class="{active:page==='sos'}" @click="nav('sos')"><i class="bi bi-exclamation-octagon-fill"></i>SOS Emergency<span class="nav-badge">!</span></div>
+        <div class="nav-item" :class="{active:page==='safety-tips'}" @click="nav('safety-tips')"><i class="bi bi-shield-check"></i>Safety Tips</div>
+      </template>
+
+      <!-- OFFICER NAV -->
+      <template v-if="session.role==='officer'">
+        <div class="nav-section">Command</div>
+        <div class="nav-item" :class="{active:page==='officer-dashboard'}" @click="nav('officer-dashboard')"><i class="bi bi-speedometer2"></i>Dashboard</div>
+        <div class="nav-section">Case Management</div>
+        <div class="nav-item" :class="{active:page==='officer-cases'}" @click="nav('officer-cases')"><i class="bi bi-folder2-open"></i>All Cases
+          <span v-if="officerStats.pending" class="nav-badge">{{officerStats.pending}}</span>
+        </div>
+        <div class="nav-section">Intelligence</div>
+        <div class="nav-item" :class="{active:page==='officer-analytics'}" @click="nav('officer-analytics')"><i class="bi bi-graph-up"></i>Analytics</div>
+      </template>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="user-card">
+        <div class="u-avatar" :class="{officer:session.role==='officer'}">{{session.initials}}</div>
+        <div style="min-width:0;">
+          <div class="u-name">{{session.displayName}}</div>
+          <div class="u-role">{{session.role==='officer'?session.user?.rank:session.user?.national_id}}</div>
+        </div>
+        <button class="btn-logout" @click="logout" title="Sign out"><i class="bi bi-box-arrow-right"></i></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+    <header class="topbar">
+      <button class="btn-ham" @click="sidebarOpen=!sidebarOpen"><i class="bi bi-list"></i></button>
+      <div>
+        <div class="topbar-title">{{pageTitle}}</div>
+        <div class="topbar-sub">{{pageSubtitle}}</div>
+      </div>
+      <div class="ms-auto d-flex align-items-center gap-3">
+        <div style="font-size:11.5px;color:var(--text-3);" class="d-none d-md-block">{{nowStr}}</div>
+        <div class="u-avatar sm" :class="{officer:session.role==='officer'}">{{session.initials}}</div>
+      </div>
+    </header>
+
+    <div class="page">
+
+      <!-- ══════════════ CITIZEN DASHBOARD ══════════════ -->
+      <div v-if="page==='citizen-dashboard'">
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-md-3" v-for="s in citizenStatCards" :key="s.label">
+            <div class="stat-card">
+              <div class="stat-ic" :class="s.ic"><i :class="s.icon"></i></div>
+              <div class="stat-val" :style="{color:s.color}">{{s.val}}</div>
+              <div class="stat-lbl">{{s.label}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <div class="card">
+              <div class="card-hd"><i class="bi bi-clock-history text-teal"></i><span class="card-hd-title">Recent Reports</span>
+                <button class="btn btn-ghost btn-sm ms-auto" @click="nav('my-reports')">View All <i class="bi bi-arrow-right"></i></button>
+              </div>
+              <div v-if="loading.cdash" class="loading-wrap"><div class="spin"></div></div>
+              <table v-else class="tbl">
+                <thead><tr><th>Reference</th><th>Crime Type</th><th>Status</th><th>Date</th></tr></thead>
+                <tbody>
+                  <tr v-for="r in cdash.recent_reports" :key="r.id" @click="viewMyReport(r)">
+                    <td><span class="ref-chip">{{r.reference_number}}</span></td>
+                    <td class="td-main">{{r.crime_type}}</td>
+                    <td><span class="badge" :class="statusBadge(r.status)"><span class="bdot"></span>{{statusLabel(r.status)}}</span></td>
+                    <td class="mono" style="font-size:11.5px;color:var(--text-3);">{{fmtDate(r.created_at)}}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div v-if="!loading.cdash && !cdash.recent_reports?.length" class="empty"><i class="bi bi-folder2"></i><p>No reports yet. <a style="color:var(--teal);cursor:pointer;" @click="nav('report-named')">File your first report →</a></p></div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <!-- Quick actions -->
+            <div class="card mb-3">
+              <div class="card-hd"><i class="bi bi-lightning-fill text-teal"></i><span class="card-hd-title">Quick Actions</span></div>
+              <div class="card-bd d-flex flex-column gap-2">
+                <button class="btn btn-teal w-100" style="justify-content:center;" @click="nav('report-named')"><i class="bi bi-file-earmark-plus"></i>File a Named Report</button>
+                <button class="btn btn-ghost w-100" style="justify-content:center;" @click="nav('report-anonymous')"><i class="bi bi-incognito"></i>Report Anonymously</button>
+                <button class="btn btn-danger w-100" style="justify-content:center;" @click="nav('sos')"><i class="bi bi-exclamation-octagon-fill"></i>SOS Emergency</button>
+              </div>
+            </div>
+            <!-- Safety tip preview -->
+            <div class="card">
+              <div class="card-hd"><i class="bi bi-shield-check text-teal"></i><span class="card-hd-title">Safety Tip</span></div>
+              <div class="card-bd" v-if="cdash.tip">
+                <div class="d-flex gap-3">
+                  <div class="tip-icon"><i :class="'bi '+cdash.tip.icon"></i></div>
+                  <div>
+                    <div style="font-size:13.5px;font-weight:600;margin-bottom:5px;">{{cdash.tip.title}}</div>
+                    <div style="font-size:12.5px;color:var(--text-3);line-height:1.65;">{{cdash.tip.content}}</div>
+                  </div>
+                </div>
+                <button class="btn btn-ghost btn-sm mt-3 w-100" style="justify-content:center;" @click="nav('safety-tips')">View All Tips</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ REPORT NAMED ══════════════ -->
+      <div v-if="page==='report-named'" style="max-width:780px;margin:auto;">
+        <div class="card">
+          <div class="card-hd"><i class="bi bi-file-earmark-text-fill text-teal"></i><span class="card-hd-title">File a Named Crime Report</span></div>
+          <div class="card-bd">
+            <div v-if="repSuccess" style="text-align:center;padding:32px 0;">
+              <i class="bi bi-check-circle-fill" style="font-size:52px;color:var(--green);display:block;margin-bottom:14px;"></i>
+              <div style="font-size:20px;font-weight:800;margin-bottom:8px;">Report Filed Successfully!</div>
+              <p style="color:var(--text-3);margin-bottom:20px;">Your report has been submitted and assigned for review.</p>
+              <div style="background:var(--teal-dim);border:1px solid rgba(0,194,168,.2);border-radius:10px;padding:16px;display:inline-block;margin-bottom:24px;">
+                <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Reference Number</div>
+                <div class="mono" style="font-size:24px;color:var(--teal);font-weight:700;">{{lastRef}}</div>
+              </div>
+              <div class="d-flex gap-3 justify-content-center">
+                <button class="btn btn-ghost" @click="repSuccess=false;resetRepForm()"><i class="bi bi-plus-lg"></i>New Report</button>
+                <button class="btn btn-teal" @click="nav('my-reports')"><i class="bi bi-folder2-open"></i>View My Reports</button>
+              </div>
+            </div>
+            <div v-else>
+              <div v-if="repError" class="err-msg mb-3"><i class="bi bi-exclamation-triangle-fill"></i>{{repError}}</div>
+              <div class="row g-3">
+                <div class="col-md-6"><label class="form-lbl">Crime Type *</label><select v-model="repForm.crime_type" class="form-ctrl" style="width:100%"><option value="">— Select —</option><option v-for="c in crimeTypes" :key="c">{{c}}</option></select></div>
+                <div class="col-md-6"><label class="form-lbl">County *</label><select v-model="repForm.county" class="form-ctrl" style="width:100%"><option value="">— County —</option><option v-for="c in counties" :key="c">{{c}}</option></select></div>
+                <div class="col-md-6"><label class="form-lbl">Sub-County / Area</label><input v-model="repForm.sub_county" class="form-ctrl" placeholder="Sub-county or estate"/></div>
+                <div class="col-md-6"><label class="form-lbl">Specific Location</label><input v-model="repForm.location" class="form-ctrl" placeholder="Street name, building, landmark"/></div>
+                <div class="col-md-6"><label class="form-lbl">Date of Incident *</label><input v-model="repForm.incident_date" type="date" class="form-ctrl" :max="today"/></div>
+                <div class="col-md-6"><label class="form-lbl">Approximate Time</label><input v-model="repForm.incident_time" type="time" class="form-ctrl"/></div>
+                <div class="col-12"><label class="form-lbl">Full Description *</label><textarea v-model="repForm.description" class="form-ctrl" placeholder="Describe exactly what happened. Include details about perpetrators, weapons, vehicles, sequence of events..." style="min-height:160px;"></textarea></div>
+                <div class="col-12"><label class="form-lbl">Suspect Information (optional)</label><textarea v-model="repForm.suspect_info" class="form-ctrl" placeholder="Physical description, clothing, vehicle registration, known name..." style="min-height:90px;"></textarea></div>
+                <div class="col-12"><label class="form-lbl">Witness Information (optional)</label><textarea v-model="repForm.witness_info" class="form-ctrl" placeholder="Names or descriptions of any witnesses..." style="min-height:90px;"></textarea></div>
+                <div class="col-12">
+                  <button class="btn btn-teal" style="padding:12px 28px;" @click="submitNamedReport" :disabled="repLoading">
+                    <span v-if="repLoading" class="spin sm"></span>
+                    <i v-else class="bi bi-send-fill"></i>
+                    {{repLoading?'Submitting...':'Submit Report'}}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ REPORT ANONYMOUS (citizen view) ══════════════ -->
+      <div v-if="page==='report-anonymous'" style="max-width:780px;margin:auto;">
+        <div class="anon-note mb-4"><i class="bi bi-incognito"></i><p><strong style="color:var(--text-1);">You are logged in — but this report will still be anonymous.</strong><br/>Your National ID will NOT be linked to this submission. Officers will not know it came from you.</p></div>
+        <div class="card">
+          <div class="card-hd"><i class="bi bi-incognito text-teal"></i><span class="card-hd-title">Anonymous Crime Report</span></div>
+          <div class="card-bd">
+            <div v-if="anonSuccess2" style="text-align:center;padding:32px 0;">
+              <i class="bi bi-check-circle-fill" style="font-size:52px;color:var(--green);display:block;margin-bottom:14px;"></i>
+              <div style="font-size:20px;font-weight:800;margin-bottom:8px;">Anonymous Report Submitted!</div>
+              <div style="background:var(--teal-dim);border:1px solid rgba(0,194,168,.2);border-radius:10px;padding:16px;display:inline-block;margin:16px 0;">
+                <div class="mono" style="font-size:22px;color:var(--teal);font-weight:700;">{{lastAnonRef}}</div>
+                <div style="font-size:12px;color:var(--text-3);margin-top:5px;">Save this reference number</div>
+              </div>
+              <div><button class="btn btn-ghost mt-2" @click="anonSuccess2=false;resetAnonForm()"><i class="bi bi-plus-lg"></i>Submit Another</button></div>
+            </div>
+            <div v-else>
+              <div v-if="anonError2" class="err-msg mb-3"><i class="bi bi-exclamation-triangle-fill"></i>{{anonError2}}</div>
+              <div class="row g-3">
+                <div class="col-md-6"><label class="form-lbl">Crime Type *</label><select v-model="anonForm2.crime_type" class="form-ctrl" style="width:100%"><option value="">— Select —</option><option v-for="c in crimeTypes" :key="c">{{c}}</option></select></div>
+                <div class="col-md-6"><label class="form-lbl">County</label><select v-model="anonForm2.county" class="form-ctrl" style="width:100%"><option value="">— County —</option><option v-for="c in counties" :key="c">{{c}}</option></select></div>
+                <div class="col-12"><label class="form-lbl">Location</label><input v-model="anonForm2.location" class="form-ctrl" placeholder="Street or area (no need to be exact)"/></div>
+                <div class="col-md-6"><label class="form-lbl">Date of Incident</label><input v-model="anonForm2.incident_date" type="date" class="form-ctrl" :max="today"/></div>
+                <div class="col-md-6"><label class="form-lbl">Approximate Time</label><input v-model="anonForm2.incident_time" type="time" class="form-ctrl"/></div>
+                <div class="col-12"><label class="form-lbl">Description *</label><textarea v-model="anonForm2.description" class="form-ctrl" placeholder="Describe what happened..." style="min-height:150px;"></textarea></div>
+                <div class="col-12"><label class="form-lbl">Suspect Info (optional)</label><textarea v-model="anonForm2.suspect_info" class="form-ctrl" style="min-height:80px;"></textarea></div>
+                <div class="col-12"><button class="btn btn-teal" style="padding:12px 28px;" @click="submitAnon2" :disabled="anonLoading2"><span v-if="anonLoading2" class="spin sm"></span><i v-else class="bi bi-incognito"></i>{{anonLoading2?'Submitting...':'Submit Anonymously'}}</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ MY REPORTS ══════════════ -->
+      <div v-if="page==='my-reports'">
+        <div class="filter-row mb-4">
+          <select v-model="myRepFilter" class="form-ctrl" style="max-width:180px;" @change="loadMyReports"><option value="">All Status</option><option value="pending">Pending</option><option value="under_review">Under Review</option><option value="resolved">Resolved</option><option value="dismissed">Dismissed</option></select>
+          <span style="font-size:13px;color:var(--text-3);">{{myReports.length}} report(s)</span>
+        </div>
+        <div v-if="loading.myReports" class="loading-wrap"><div class="spin"></div></div>
+        <div v-else>
+          <div v-if="!myReports.length" class="empty"><i class="bi bi-folder2"></i><p>No reports found</p></div>
+          <div class="row g-3">
+            <div class="col-md-6 col-xl-4" v-for="r in myReports" :key="r.id">
+              <div class="card" style="cursor:pointer;" @click="viewMyReport(r)">
+                <div class="card-bd">
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <span class="ref-chip">{{r.reference_number}}</span>
+                    <span class="badge" :class="r.is_anonymous?'b-anon':'b-teal'" style="font-size:10px;">{{r.is_anonymous?'Anonymous':'Named'}}</span>
+                  </div>
+                  <div style="font-size:14px;font-weight:600;margin-bottom:8px;">{{r.crime_type}}</div>
+                  <div style="font-size:12.5px;color:var(--text-3);margin-bottom:10px;"><i class="bi bi-geo-alt me-1"></i>{{r.location||r.county||'Location not specified'}}</div>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="badge" :class="statusBadge(r.status)"><span class="bdot"></span>{{statusLabel(r.status)}}</span>
+                    <span class="mono" style="font-size:11px;color:var(--text-3);">{{fmtDate(r.created_at)}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ SOS ══════════════ -->
+      <div v-if="page==='sos'" style="max-width:620px;margin:auto;">
+        <div v-if="!sosSubmitted">
+          <div class="anon-note mb-4" style="background:var(--red-dim);border-color:rgba(240,79,79,.25);">
+            <i class="bi bi-exclamation-triangle-fill" style="color:var(--red);"></i>
+            <p><strong style="color:var(--text-1);">Emergency SOS Alert</strong><br/>This will immediately notify the nearest available officers. Only use in genuine emergencies.</p>
+          </div>
+          <div class="card mb-4">
+            <div class="card-bd" style="padding:32px;">
+              <button class="sos-btn" :class="{pressed:sosLoading}" @click="sendSOS" :disabled="sosLoading">
+                <div class="sos-pulse"><i class="bi bi-exclamation-lg"></i></div>
+                <div>
+                  <div>{{sosLoading?'SENDING ALERT...':'SEND SOS ALERT'}}</div>
+                  <div style="font-size:13px;font-weight:400;margin-top:4px;opacity:.8;">{{sosLoading?'Officers are being notified...':'Tap to notify nearest officers'}}</div>
+                </div>
+              </button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><i class="bi bi-pencil text-teal"></i><span class="card-hd-title">Add Details (optional)</span></div>
+            <div class="card-bd">
+              <div class="mb-3"><label class="form-lbl">Your Location / Address</label><input v-model="sosForm.address" class="form-ctrl" placeholder="Describe where you are"/></div>
+              <div><label class="form-lbl">Additional Message</label><textarea v-model="sosForm.message" class="form-ctrl" placeholder="Type of emergency, number of people involved..." style="min-height:80px;"></textarea></div>
+            </div>
+          </div>
+        </div>
+        <div v-else class="card" style="text-align:center;padding:48px 24px;">
+          <div class="sos-pulse" style="margin:0 auto 20px;animation:pulse-ring 1.5s ease-out infinite;"><i class="bi bi-check-lg"></i></div>
+          <div style="font-size:22px;font-weight:800;margin-bottom:8px;color:var(--green);">SOS Alert Sent!</div>
+          <p style="color:var(--text-3);margin-bottom:24px;">Officers have been notified of your emergency. Stay calm and stay safe.</p>
+          <div style="background:var(--green-dim);border:1px solid rgba(34,197,94,.25);border-radius:10px;padding:14px;margin-bottom:24px;">
+            <div style="font-size:13px;color:var(--text-2);"><i class="bi bi-clock me-1"></i>Alert sent at {{sosTime}}</div>
+          </div>
+          <button class="btn btn-ghost mx-auto" style="justify-content:center;" @click="sosSubmitted=false"><i class="bi bi-arrow-left"></i>Back</button>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-hd"><i class="bi bi-telephone-fill text-teal"></i><span class="card-hd-title">Emergency Contacts</span></div>
+          <div class="card-bd">
+            <div class="d-flex flex-column gap-3">
+              <div v-for="ec in emergencyContacts" :key="ec.num" style="display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--border);">
+                <div class="tip-icon" :style="{background:ec.bg,color:ec.color,border:'none'}"><i :class="'bi '+ec.icon"></i></div>
+                <div><div style="font-size:14px;font-weight:600;">{{ec.name}}</div><div style="font-size:12px;color:var(--text-3);">{{ec.desc}}</div></div>
+                <a :href="'tel:'+ec.num" class="btn btn-ghost btn-sm ms-auto mono"><i class="bi bi-telephone-fill"></i>{{ec.num}}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ SAFETY TIPS ══════════════ -->
+      <div v-if="page==='safety-tips'">
+        <div class="d-flex gap-2 flex-wrap mb-4">
+          <button class="tip-cat-btn" :class="{active:tipCategory===''}" @click="tipCategory='';loadTips()">All</button>
+          <button v-for="cat in tipCategories" :key="cat" class="tip-cat-btn" :class="{active:tipCategory===cat}" @click="tipCategory=cat;loadTips()">{{cat}}</button>
+        </div>
+        <div v-if="loading.tips" class="loading-wrap"><div class="spin"></div></div>
+        <div v-else>
+          <div v-if="tipCategory===''">
+            <div v-for="cat in uniqueTipCats" :key="cat" class="mb-4">
+              <div style="font-size:13px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;display:flex;align-items:center;gap:8px;">{{cat}}<span style="flex:1;height:1px;background:var(--border);display:block;"></span></div>
+              <div class="row g-3">
+                <div class="col-md-6" v-for="tip in tips.filter(t=>t.category===cat)" :key="tip.id">
+                  <div class="tip-card"><div class="tip-icon"><i :class="'bi '+tip.icon"></i></div><div><div style="font-size:13.5px;font-weight:600;margin-bottom:5px;">{{tip.title}}</div><div style="font-size:12.5px;color:var(--text-3);line-height:1.65;">{{tip.content}}</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-else class="row g-3">
+            <div class="col-md-6" v-for="tip in tips" :key="tip.id">
+              <div class="tip-card"><div class="tip-icon"><i :class="'bi '+tip.icon"></i></div><div><div style="font-size:13.5px;font-weight:600;margin-bottom:5px;">{{tip.title}}</div><div style="font-size:12.5px;color:var(--text-3);line-height:1.65;">{{tip.content}}</div></div></div>
+            </div>
+          </div>
+          <div v-if="!tips.length" class="empty"><i class="bi bi-shield"></i><p>No tips in this category</p></div>
+        </div>
+      </div>
+
+      <!-- ══════════════ OFFICER DASHBOARD ══════════════ -->
+      <div v-if="page==='officer-dashboard'">
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-md-4 col-xl-2" v-for="s in officerStatCards" :key="s.label">
+            <div class="stat-card">
+              <div class="stat-ic" :class="s.ic"><i :class="s.icon"></i></div>
+              <div class="stat-val" :style="{color:s.color}">{{s.val}}</div>
+              <div class="stat-lbl">{{s.label}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <!-- Recent cases table -->
+          <div class="col-xl-8">
+            <div class="card">
+              <div class="card-hd"><i class="bi bi-clock-history text-teal"></i><span class="card-hd-title">Recent Reports</span>
+                <button class="btn btn-ghost btn-sm ms-auto" @click="nav('officer-cases')">All Cases <i class="bi bi-arrow-right"></i></button>
+              </div>
+              <div v-if="loading.odash" class="loading-wrap"><div class="spin"></div></div>
+              <table v-else class="tbl">
+                <thead><tr><th>Ref #</th><th>Type</th><th>County</th><th>Priority</th><th>Status</th><th>Reporter</th></tr></thead>
+                <tbody>
+                  <tr v-for="r in odash.recent_reports" :key="r.id" @click="openOfficerCase(r.id)">
+                    <td><span class="ref-chip">{{r.reference_number}}</span></td>
+                    <td class="td-main">{{r.crime_type}}</td>
+                    <td style="color:var(--text-3);">{{r.county||'—'}}</td>
+                    <td><span class="badge" :class="'b-'+r.priority">{{cap(r.priority)}}</span></td>
+                    <td><span class="badge" :class="statusBadge(r.status)"><span class="bdot"></span>{{statusLabel(r.status)}}</span></td>
+                    <td style="color:var(--text-3);">{{r.is_anonymous?'Anonymous':r.display_name||'Citizen'}}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div v-if="!loading.odash && !odash.recent_reports?.length" class="empty"><i class="bi bi-inbox"></i><p>No reports yet</p></div>
+            </div>
+          </div>
+
+          <!-- Charts column -->
+          <div class="col-xl-4">
+            <!-- Status donut -->
+            <div class="card mb-4">
+              <div class="card-hd"><i class="bi bi-pie-chart-fill text-teal"></i><span class="card-hd-title">Status Overview</span></div>
+              <div class="card-bd">
+                <div class="donut-wrap mb-3">
+                  <svg class="donut-svg" width="120" height="120" viewBox="0 0 120 120">
+                    <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-width="16"/>
+                    <circle v-for="(seg,i) in donutSegments" :key="i" cx="60" cy="60" r="50" fill="none"
+                            :stroke="seg.color" stroke-width="16" stroke-linecap="round"
+                            :stroke-dasharray="seg.dash" :stroke-dashoffset="seg.offset"/>
+                  </svg>
+                  <div class="donut-center">
+                    <div class="donut-val">{{officerStats.total||0}}</div>
+                    <div class="donut-sub">TOTAL</div>
+                  </div>
+                </div>
+                <div>
+                  <div class="legend-row" v-for="l in donutLegend" :key="l.label">
+                    <div class="legend-dot" :style="{background:l.color}"></div>
+                    <span style="flex:1;">{{l.label}}</span>
+                    <span class="mono" style="font-size:12px;color:var(--text-2);">{{l.val}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Crime type breakdown -->
+            <div class="card">
+              <div class="card-hd"><i class="bi bi-bar-chart-fill text-teal"></i><span class="card-hd-title">By Crime Type</span></div>
+              <div class="card-bd">
+                <div class="bar-chart" v-if="odash.by_type?.length">
+                  <div class="bar-row" v-for="t in odash.by_type?.slice(0,6)" :key="t.crime_type">
+                    <span class="bar-lbl">{{t.crime_type}}</span>
+                    <div class="bar-track"><div class="bar-fill" :style="{width:(t.cnt/maxType*100)+'%',background:'var(--teal)'}"></div></div>
+                    <span class="bar-num">{{t.cnt}}</span>
+                  </div>
+                </div>
+                <div v-else class="empty" style="padding:20px 0;"><p>No data yet</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly trend -->
+        <div class="card mt-4">
+          <div class="card-hd"><i class="bi bi-graph-up text-teal"></i><span class="card-hd-title">Monthly Reports (Last 6 Months)</span></div>
+          <div class="card-bd">
+            <div v-if="odash.monthly_trend?.length" class="trend-chart">
+              <div class="trend-col" v-for="m in odash.monthly_trend" :key="m.month">
+                <div class="trend-bar-wrap">
+                  <div class="trend-bar" :style="{height:Math.max(4,(+m.count/maxTrend*78))+'px',background:'var(--teal)'}"></div>
+                </div>
+                <div class="trend-lbl">{{m.month}}</div>
+              </div>
+            </div>
+            <div v-else class="empty" style="padding:20px 0;"><p>No trend data</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ OFFICER CASES ══════════════ -->
+      <div v-if="page==='officer-cases'">
+        <div class="filter-row mb-4">
+          <div class="srch-wrap" style="flex:1;max-width:300px;"><i class="bi bi-search"></i><input v-model="caseFilter.search" class="form-ctrl" placeholder="Search cases..." @input="debounceSearch"/></div>
+          <select v-model="caseFilter.status"   class="form-ctrl" @change="loadOfficerCases"><option value="">All Status</option><option value="pending">Pending</option><option value="under_review">Under Review</option><option value="resolved">Resolved</option><option value="dismissed">Dismissed</option></select>
+          <select v-model="caseFilter.priority" class="form-ctrl" @change="loadOfficerCases"><option value="">All Priority</option><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+          <select v-model="caseFilter.crime_type" class="form-ctrl" @change="loadOfficerCases"><option value="">All Types</option><option v-for="c in crimeTypes" :key="c">{{c}}</option></select>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-2);white-space:nowrap;cursor:pointer;">
+            <input type="checkbox" v-model="caseFilter.mine" @change="caseFilter.assigned_to_me=caseFilter.mine?'1':'';loadOfficerCases()"/> My cases
+          </label>
+        </div>
+
+        <div class="card">
+          <div v-if="loading.cases" class="loading-wrap"><div class="spin"></div></div>
+          <table v-else class="tbl">
+            <thead><tr><th>Ref #</th><th>Crime Type</th><th>Location</th><th>Reporter</th><th>Priority</th><th>Status</th><th>Date</th><th></th></tr></thead>
+            <tbody>
+              <tr v-for="c in casesList" :key="c.id" @click="openOfficerCase(c.id)">
+                <td><span class="ref-chip">{{c.reference_number}}</span></td>
+                <td class="td-main">{{c.crime_type}}</td>
+                <td style="color:var(--text-3);">{{c.county||'—'}}</td>
+                <td style="color:var(--text-3);">{{c.is_anonymous?'Anonymous':c.citizen_name||'—'}}</td>
+                <td><span class="badge" :class="'b-'+c.priority">{{cap(c.priority)}}</span></td>
+                <td><span class="badge" :class="statusBadge(c.status)"><span class="bdot"></span>{{statusLabel(c.status)}}</span></td>
+                <td class="mono" style="font-size:11.5px;color:var(--text-3);">{{fmtDate(c.created_at)}}</td>
+                <td><button class="btn btn-ghost btn-xs" @click.stop="openOfficerCase(c.id)"><i class="bi bi-arrow-right-circle"></i></button></td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-if="!loading.cases && !casesList.length" class="empty"><i class="bi bi-inbox"></i><p>No cases found</p></div>
+          <div v-if="casesPag.pages>1" class="pager">
+            <button class="pg-btn" :disabled="casesPag.page<=1" @click="changePage(-1)"><i class="bi bi-chevron-left"></i></button>
+            <button v-for="p in pageNums" :key="p" class="pg-btn" :class="{on:p===casesPag.page}" @click="goPage(p)">{{p}}</button>
+            <button class="pg-btn" :disabled="casesPag.page>=casesPag.pages" @click="changePage(1)"><i class="bi bi-chevron-right"></i></button>
+            <span class="pg-info">{{casesPag.total}} total</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ OFFICER ANALYTICS ══════════════ -->
+      <div v-if="page==='officer-analytics'">
+        <div v-if="loading.analytics" class="loading-wrap"><div class="spin"></div></div>
+        <div v-else>
+          <!-- KPI row -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-3">
+              <div class="stat-card"><div class="stat-ic ic-teal"><i class="bi bi-hourglass-split"></i></div><div class="stat-val" style="color:var(--teal);">{{analytics.avg_resolution_days}}d</div><div class="stat-lbl">Avg. Resolution</div></div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-card"><div class="stat-ic ic-green"><i class="bi bi-check-circle-fill"></i></div><div class="stat-val" style="color:var(--green);">{{resolvedPct}}%</div><div class="stat-lbl">Resolution Rate</div></div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-card"><div class="stat-ic ic-red"><i class="bi bi-exclamation-octagon-fill"></i></div><div class="stat-val" style="color:var(--red);">{{topCrime}}</div><div class="stat-lbl">Top Crime Type</div></div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-card"><div class="stat-ic ic-blue"><i class="bi bi-people-fill"></i></div><div class="stat-val" style="color:var(--blue);">{{analytics.officers_performance?.length||0}}</div><div class="stat-lbl">Active Officers</div></div>
+            </div>
+          </div>
+
+          <div class="row g-4">
+            <!-- Monthly trend (12 months) -->
+            <div class="col-lg-8">
+              <div class="card">
+                <div class="card-hd"><i class="bi bi-graph-up text-teal"></i><span class="card-hd-title">12-Month Report Trend</span></div>
+                <div class="card-bd">
+                  <div v-if="analytics.monthly?.length" class="trend-chart" style="height:110px;">
+                    <div class="trend-col" v-for="m in analytics.monthly" :key="m.month">
+                      <div class="trend-bar-wrap">
+                        <div class="trend-bar" :style="{height:Math.max(4,(+m.total/maxMonthly*95))+'px',background:'var(--teal)'}"></div>
+                      </div>
+                      <div class="trend-lbl">{{m.month}}</div>
+                    </div>
+                  </div>
+                  <div v-else class="empty" style="padding:20px 0;"><p>No data</p></div>
+                </div>
+              </div>
+            </div>
+            <!-- Crime types pie/list -->
+            <div class="col-lg-4">
+              <div class="card">
+                <div class="card-hd"><i class="bi bi-bar-chart-fill text-teal"></i><span class="card-hd-title">Crime Type Breakdown</span></div>
+                <div class="card-bd">
+                  <div class="bar-chart">
+                    <div class="bar-row" v-for="t in analytics.by_type?.slice(0,7)" :key="t.crime_type">
+                      <span class="bar-lbl">{{t.crime_type}}</span>
+                      <div class="bar-track"><div class="bar-fill" :style="{width:t.pct+'%',background:'var(--teal)'}"></div></div>
+                      <span class="bar-num">{{t.pct}}%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-4 mt-0">
+            <!-- Hourly heatmap -->
+            <div class="col-lg-6">
+              <div class="card">
+                <div class="card-hd"><i class="bi bi-clock text-teal"></i><span class="card-hd-title">Incidents by Hour of Day</span></div>
+                <div class="card-bd">
+                  <div class="hourly-bars">
+                    <div v-for="h in hourlyBars" :key="h.hour" class="hr-bar" :style="{height:h.height+'px'}" :title="h.hour+':00 — '+h.cnt+' reports'"></div>
+                  </div>
+                  <div style="display:flex;gap:0px;margin-top:4px;">
+                    <div v-for="h in hourlyBars" :key="h.hour" class="hr-lbl">{{h.hour%6===0?h.hour+'h':''}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- County map/list -->
+            <div class="col-lg-6">
+              <div class="card">
+                <div class="card-hd"><i class="bi bi-geo-alt-fill text-teal"></i><span class="card-hd-title">Reports by County</span></div>
+                <div class="card-bd">
+                  <div class="bar-chart" v-if="analytics.by_county?.length">
+                    <div class="bar-row" v-for="c in analytics.by_county?.slice(0,8)" :key="c.county">
+                      <span class="bar-lbl">{{c.county}}</span>
+                      <div class="bar-track"><div class="bar-fill" :style="{width:(c.cnt/analytics.by_county[0].cnt*100)+'%',background:'var(--blue)'}"></div></div>
+                      <span class="bar-num">{{c.cnt}}</span>
+                    </div>
+                  </div>
+                  <div v-else class="empty" style="padding:20px 0;"><p>No data</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Officer performance -->
+          <div class="card mt-4">
+            <div class="card-hd"><i class="bi bi-people-fill text-teal"></i><span class="card-hd-title">Officer Performance</span></div>
+            <div class="card-bd">
+              <div v-for="o in analytics.officers_performance" :key="o.officer_id" class="perf-row">
+                <div class="u-avatar sm officer">{{o.name?.charAt(0)}}</div>
+                <div style="flex:1;margin-left:10px;min-width:0;">
+                  <div class="perf-name">{{o.name}}</div>
+                  <div class="perf-sub">{{o.rank}} · {{o.officer_id}}</div>
+                </div>
+                <div style="display:flex;gap:20px;text-align:center;">
+                  <div><div class="perf-stat" style="color:var(--teal);">{{o.total_cases}}</div><div style="font-size:10px;color:var(--text-3);">Assigned</div></div>
+                  <div><div class="perf-stat" style="color:var(--green);">{{o.resolved}}</div><div style="font-size:10px;color:var(--text-3);">Resolved</div></div>
+                  <div><div class="perf-stat" style="color:var(--amber);">{{o.pending}}</div><div style="font-size:10px;color:var(--text-3);">Pending</div></div>
+                </div>
+              </div>
+              <div v-if="!analytics.officers_performance?.length" class="empty" style="padding:20px 0;"><p>No data</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page -->
+  </div><!-- /main -->
+</template>
+
+<!-- ══════════════ CASE DETAIL MODAL (officer) ══════════════ -->
+<div v-if="caseModal" class="overlay" @click.self="caseModal=false">
+  <div class="modal lg">
+    <div class="modal-hd">
+      <div>
+        <span class="ref-chip" style="font-size:13px;">{{currentCase?.reference_number}}</span>
+        <div class="modal-title mt-2">{{currentCase?.crime_type}}</div>
+      </div>
+      <button class="modal-close" @click="caseModal=false"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="modal-bd" v-if="currentCase">
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3"><label class="form-lbl">Status</label>
+          <select v-model="editCase.status" class="form-ctrl" style="width:100%">
+            <option value="pending">Pending</option><option value="under_review">Under Review</option>
+            <option value="resolved">Resolved</option><option value="dismissed">Dismissed</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-3"><label class="form-lbl">Priority</label>
+          <select v-model="editCase.priority" class="form-ctrl" style="width:100%">
+            <option value="low">Low</option><option value="medium">Medium</option>
+            <option value="high">High</option><option value="critical">Critical</option>
+          </select>
+        </div>
+        <div class="col-md-6"><label class="form-lbl">Assign To</label>
+          <select v-model="editCase.assigned_officer_id" class="form-ctrl" style="width:100%">
+            <option value="">Unassigned</option>
+            <option v-for="o in officersList" :key="o.id" :value="o.id">{{o.name}} ({{o.officer_id}})</option>
+          </select>
+        </div>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-md-6"><label class="form-lbl">County</label><p style="color:var(--text-2);font-size:13.5px;">{{currentCase.county||'—'}}</p></div>
+        <div class="col-md-6"><label class="form-lbl">Location</label><p style="color:var(--text-2);font-size:13.5px;">{{currentCase.location||'—'}}</p></div>
+        <div class="col-md-6"><label class="form-lbl">Date</label><p style="color:var(--text-2);font-size:13.5px;">{{currentCase.incident_date||'—'}}</p></div>
+        <div class="col-md-6"><label class="form-lbl">Reporter</label><p style="color:var(--text-2);font-size:13.5px;">{{currentCase.is_anonymous?'Anonymous':currentCase.citizen_name||'—'}}</p></div>
+        <div class="col-12" v-if="currentCase.description"><label class="form-lbl">Description</label><p style="color:var(--text-2);font-size:13.5px;line-height:1.7;">{{currentCase.description}}</p></div>
+        <div class="col-12" v-if="currentCase.suspect_info"><label class="form-lbl">Suspect Info</label><p style="color:var(--text-2);font-size:13.5px;">{{currentCase.suspect_info}}</p></div>
+        <div class="col-12" v-if="currentCase.witness_info"><label class="form-lbl">Witness Info</label><p style="color:var(--text-2);font-size:13.5px;">{{currentCase.witness_info}}</p></div>
+      </div>
+      <hr class="div"/>
+      <label class="form-lbl">Add Officer Note</label>
+      <textarea v-model="editCase.note" class="form-ctrl mb-3" placeholder="Add investigation notes, findings, or status update..." style="min-height:90px;"></textarea>
+      <!-- Timeline -->
+      <div v-if="currentCaseUpdates?.length">
+        <div class="form-lbl mb-3">Case Timeline</div>
+        <div class="timeline">
+          <div class="tl-item" v-for="u in currentCaseUpdates" :key="u.id">
+            <div class="tl-dot"></div>
+            <div class="tl-time">{{fmtDateTime(u.created_at)}} &nbsp;·&nbsp; {{u.officer_name||'Officer'}}</div>
+            <div class="tl-text">{{u.note}}<span v-if="u.status_changed_to" class="ms-2 badge b-teal" style="font-size:10px;">→ {{statusLabel(u.status_changed_to)}}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" @click="caseModal=false">Close</button>
+      <button class="btn btn-teal" @click="saveCase" :disabled="loading.saveCase">
+        <span v-if="loading.saveCase" class="spin sm"></span>
+        <i v-else class="bi bi-check-lg"></i>
+        Save Changes
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MY REPORT DETAIL MODAL (citizen) ══════════════ -->
+<div v-if="myRepModal" class="overlay" @click.self="myRepModal=false">
+  <div class="modal">
+    <div class="modal-hd">
+      <div><span class="ref-chip">{{myRepDetail?.report?.reference_number}}</span><div class="modal-title mt-2">{{myRepDetail?.report?.crime_type}}</div></div>
+      <button class="modal-close" @click="myRepModal=false"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="modal-bd" v-if="myRepDetail">
+      <div class="d-flex gap-2 mb-3">
+        <span class="badge" :class="statusBadge(myRepDetail.report.status)"><span class="bdot"></span>{{statusLabel(myRepDetail.report.status)}}</span>
+        <span class="badge" :class="myRepDetail.report.is_anonymous?'b-anon':'b-teal'">{{myRepDetail.report.is_anonymous?'Anonymous':'Named'}}</span>
+      </div>
+      <div class="row g-3 mb-3">
+        <div class="col-6"><label class="form-lbl">County</label><p style="color:var(--text-2);">{{myRepDetail.report.county||'—'}}</p></div>
+        <div class="col-6"><label class="form-lbl">Date</label><p style="color:var(--text-2);">{{myRepDetail.report.incident_date||'—'}}</p></div>
+        <div class="col-12"><label class="form-lbl">Description</label><p style="color:var(--text-2);font-size:13.5px;line-height:1.7;">{{myRepDetail.report.description}}</p></div>
+      </div>
+      <div v-if="myRepDetail.updates?.length">
+        <hr class="div"/>
+        <div class="form-lbl mb-3">Officer Updates</div>
+        <div class="timeline">
+          <div class="tl-item" v-for="u in myRepDetail.updates" :key="u.id">
+            <div class="tl-dot"></div>
+            <div class="tl-time">{{fmtDateTime(u.created_at)}}</div>
+            <div class="tl-text">{{u.note}}</div>
+          </div>
+        </div>
+      </div>
+      <div v-else class="empty" style="padding:20px 0;"><i class="bi bi-clock" style="font-size:28px;"></i><p>Awaiting officer review</p></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-outline" @click="myRepModal=false">Close</button></div>
+  </div>
+</div>
+
+<!-- Toast stack -->
+<div class="toast-stack">
+  <div v-for="t in toasts" :key="t.id" class="toast" :class="t.type">
+    <i :class="t.type==='success'?'bi bi-check-circle-fill':t.type==='error'?'bi bi-x-circle-fill':'bi bi-info-circle-fill'"></i>
+    <span>{{t.message}}</span>
+  </div>
+</div>
+
+</div><!-- /#app -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+<script>
+const API = 'http://localhost:5000/api';
+const {createApp,ref,reactive,computed,onMounted,watch} = Vue;
+
+createApp({
+  setup(){
+    // ── Session ──
+    const stored = JSON.parse(localStorage.getItem('session')||'null');
+    const session = reactive(stored || {token:null,role:null,user:null,initials:'',displayName:''});
+    const isLoggedIn = computed(()=>!!session.token);
+
+    function setSession(token, role, user){
+      session.token = token; session.role = role; session.user = user;
+      if(role==='citizen'){
+        session.displayName = user.display_name;
+        session.initials = user.display_name?.slice(0,2).toUpperCase()||user.national_id?.slice(-2)||'CI';
+      } else {
+        session.displayName = user.name;
+        session.initials = user.name?.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()||'OF';
+      }
+      localStorage.setItem('session', JSON.stringify(session));
+    }
+
+    function logout(){ Object.assign(session,{token:null,role:null,user:null,initials:'',displayName:''}); localStorage.removeItem('session'); anonMode.value=false; }
+
+    // ── Login ──
+    const loginMode  = ref('citizen');
+    const loginForm  = reactive({national_id:'',officer_id:'',password:''});
+    const loginError = ref('');
+    const loginLoading = ref(false);
+    const showPw     = ref(false);
+    const anonMode   = ref(false);
+
+    const demoCitizens = [{id:'30012345',name:'John Kariuki'},{id:'28564321',name:'Mary Wanjiku'},{id:'32109876',name:'Peter Odhiambo'}];
+    const demoOfficers = [{id:'OFC-001',name:'Insp. Mwangi'},{id:'OFC-002',name:'Sgt. Otieno'},{id:'OFC-003',name:'Cpl. Kamau'}];
+
+    // slider
+    const sliderStyle = computed(()=>({
+      width: loginMode.value==='citizen' ? 'calc(50% - 4px)' : 'calc(50% - 4px)',
+      transform: loginMode.value==='citizen' ? 'translateX(0)' : 'translateX(calc(100% + 0px))'
+    }));
+    function setMode(m){ loginMode.value=m; loginError.value=''; }
+
+    async function doLogin(){
+      loginLoading.value=true; loginError.value='';
+      try{
+        let endpoint,body;
+        if(loginMode.value==='citizen'){
+          if(!loginForm.national_id.trim()){loginError.value='Please enter your National ID';return;}
+          endpoint='/auth/citizen/login'; body={national_id:loginForm.national_id.trim()};
+        } else {
+          if(!loginForm.officer_id||!loginForm.password){loginError.value='Officer ID and password required';return;}
+          endpoint='/auth/officer/login'; body={officer_id:loginForm.officer_id.trim().toUpperCase(),password:loginForm.password};
+        }
+        const r = await api(endpoint,{method:'POST',body:JSON.stringify(body)});
+        setSession(r.token, loginMode.value==='citizen'?'citizen':'officer', r.citizen||r.officer);
+        nav(loginMode.value==='citizen'?'citizen-dashboard':'officer-dashboard');
+        loadAll();
+      }catch(e){loginError.value=e.message;}
+      finally{loginLoading.value=false;}
+    }
+
+    function goAnonymous(){ anonMode.value=true; session.token='__anon__'; }
+
+    // ── API helper ──
+    async function api(path,opts={}){
+      const hdrs={'Content-Type':'application/json'};
+      if(session.token && session.token!=='__anon__') hdrs['Authorization']='Bearer '+session.token;
+      const res=await fetch(API+path,{...opts,headers:{...hdrs,...(opts.headers||{})}});
+      const d=await res.json();
+      if(!res.ok) throw new Error(d.error||'Request failed');
+      return d;
+    }
+
+    // ── Toast ──
+    const toasts=ref([]); let tid=0;
+    function toast(msg,type='success'){
+      const id=++tid; toasts.value.push({id,message:msg,type});
+      setTimeout(()=>toasts.value=toasts.value.filter(t=>t.id!==id),3000);
+    }
+
+    // ── Page / Nav ──
+    const page=ref('citizen-dashboard');
+    const sidebarOpen=ref(false);
+    const isMobile=computed(()=>window.innerWidth<992);
+
+    const pageMeta={
+      'citizen-dashboard':{title:'Dashboard',sub:'Your crime reporting overview'},
+      'report-named':     {title:'File a Report',sub:'Submit a named crime report'},
+      'report-anonymous': {title:'Report Anonymously',sub:'Fully protected anonymous reporting'},
+      'my-reports':       {title:'My Reports',sub:'Track your submitted reports'},
+      'sos':              {title:'SOS Emergency',sub:'Emergency alert to nearest officers'},
+      'safety-tips':      {title:'Safety Tips',sub:'Stay safe with expert advice'},
+      'officer-dashboard':{title:'Command Dashboard',sub:'Operational overview'},
+      'officer-cases':    {title:'All Cases',sub:'Browse and manage crime reports'},
+      'officer-analytics':{title:'Analytics',sub:'Crime intelligence & statistics'},
+    };
+    const pageTitle    = computed(()=>pageMeta[page.value]?.title||'Crime Portal');
+    const pageSubtitle = computed(()=>pageMeta[page.value]?.sub||'');
+
+    function nav(v){
+      page.value=v; sidebarOpen.value=false;
+      if(v==='citizen-dashboard') loadCitizenDash();
+      if(v==='my-reports')        loadMyReports();
+      if(v==='safety-tips')       loadTips();
+      if(v==='officer-dashboard') loadOfficerDash();
+      if(v==='officer-cases')     loadOfficerCases();
+      if(v==='officer-analytics') loadAnalytics();
+    }
+
+    // ── Time ──
+    const nowStr=ref('');
+    setInterval(()=>{nowStr.value=new Date().toLocaleString('en-KE',{weekday:'short',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})},30000);
+    nowStr.value=new Date().toLocaleString('en-KE',{weekday:'short',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    const today=new Date().toISOString().split('T')[0];
+
+    // ── Helpers ──
+    const crimeTypes=['Robbery','Assault','Burglary','Cybercrime','Fraud','Drug Trafficking','Vehicle Theft','Domestic Violence','Vandalism','Kidnapping','Sexual Harassment','Carjacking','Pickpocketing','Arson','Murder','Other'];
+    const counties=['Nairobi','Mombasa','Kisumu','Nakuru','Eldoret','Thika','Nyeri','Meru','Kakamega','Machakos','Kisii','Kitale','Malindi','Garissa','Lamu','Turkana','Other'];
+
+    function statusLabel(s){return{pending:'Pending',under_review:'Under Review',resolved:'Resolved',dismissed:'Dismissed'}[s]||s;}
+    function statusBadge(s){return{pending:'b-pending',under_review:'b-review',resolved:'b-resolved',dismissed:'b-dismissed'}[s]||'b-pending';}
+    function cap(s){return s?s[0].toUpperCase()+s.slice(1):'';}
+    function fmtDate(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-KE',{month:'short',day:'numeric',year:'numeric'});}
+    function fmtDateTime(d){if(!d)return'—';return new Date(d).toLocaleString('en-KE',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});}
+
+    const loading=reactive({cdash:false,myReports:false,tips:false,odash:false,cases:false,analytics:false,saveCase:false});
+
+    // ═══ CITIZEN ═══════════════════════════════════════════════════
+
+    // Dashboard
+    const cdash=reactive({stats:{},recent_reports:[],tip:null});
+    const citizenStatCards=computed(()=>[
+      {label:'Total Reports',val:cdash.stats.total||0,icon:'bi bi-folder2-open',ic:'ic-teal',color:'var(--teal)'},
+      {label:'Pending',val:cdash.stats.pending||0,icon:'bi bi-hourglass-split',ic:'ic-amber',color:'var(--amber)'},
+      {label:'Under Review',val:cdash.stats.under_review||0,icon:'bi bi-search',ic:'ic-blue',color:'var(--blue)'},
+      {label:'Resolved',val:cdash.stats.resolved||0,icon:'bi bi-check-circle-fill',ic:'ic-green',color:'var(--green)'},
+    ]);
+
+    async function loadCitizenDash(){
+      if(session.role!=='citizen')return;
+      loading.cdash=true;
+      try{
+        const d=await api('/citizen/dashboard'); Object.assign(cdash,d);
+        const t=await api('/safety-tips');
+        cdash.tip=t[Math.floor(Math.random()*t.length)]||null;
+      }catch(e){toast(e.message,'error');}
+      finally{loading.cdash=false;}
+    }
+
+    // My reports
+    const myReports=ref([]); const myRepFilter=ref('');
+    async function loadMyReports(){
+      if(session.role!=='citizen')return;
+      loading.myReports=true;
+      try{const p=myRepFilter.value?'?status='+myRepFilter.value:''; myReports.value=await api('/citizen/reports'+p);}
+      catch(e){toast(e.message,'error');}
+      finally{loading.myReports=false;}
+    }
+
+    // Named report
+    const repSuccess=ref(false); const repError=ref(''); const repLoading=ref(false); const lastRef=ref('');
+    const repForm=reactive({crime_type:'',county:'',sub_county:'',location:'',incident_date:'',incident_time:'',description:'',suspect_info:'',witness_info:''});
+    function resetRepForm(){Object.assign(repForm,{crime_type:'',county:'',sub_county:'',location:'',incident_date:'',incident_time:'',description:'',suspect_info:'',witness_info:''});}
+    async function submitNamedReport(){
+      if(!repForm.crime_type||!repForm.description.trim()||repForm.description.length<20){repError.value='Please select a crime type and provide a detailed description (at least 20 characters)';return;}
+      repLoading.value=true; repError.value='';
+      try{const r=await api('/citizen/reports',{method:'POST',body:JSON.stringify(repForm)}); lastRef.value=r.reference_number; repSuccess.value=true; toast('Report filed: '+r.reference_number);}
+      catch(e){repError.value=e.message;}
+      finally{repLoading.value=false;}
+    }
+
+    // Anonymous from citizen portal
+    const anonSuccess2=ref(false); const anonError2=ref(''); const anonLoading2=ref(false); const lastAnonRef=ref('');
+    const anonForm2=reactive({crime_type:'',county:'',location:'',incident_date:'',incident_time:'',description:'',suspect_info:'',witness_info:''});
+    function resetAnonForm(){Object.assign(anonForm2,{crime_type:'',county:'',location:'',incident_date:'',incident_time:'',description:'',suspect_info:'',witness_info:''});}
+    async function submitAnon2(){
+      if(!anonForm2.crime_type||!anonForm2.description.trim()||anonForm2.description.length<20){anonError2.value='Please select crime type and provide detailed description';return;}
+      anonLoading2.value=true; anonError2.value='';
+      try{const r=await fetch(API+'/citizen/reports/anonymous',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...anonForm2,is_anonymous:true})});
+        const d=await r.json(); if(!r.ok)throw new Error(d.error||'Failed');
+        lastAnonRef.value=d.reference_number; anonSuccess2.value=true; toast('Anonymous report submitted: '+d.reference_number);}
+      catch(e){anonError2.value=e.message;}
+      finally{anonLoading2.value=false;}
+    }
+
+    // My report detail modal
+    const myRepModal=ref(false); const myRepDetail=ref(null);
+    async function viewMyReport(r){
+      try{myRepDetail.value=await api('/citizen/reports/'+r.id); myRepModal.value=true;}
+      catch(e){toast(e.message,'error');}
+    }
+
+    // SOS
+    const sosForm=reactive({address:'',message:''}); const sosLoading=ref(false); const sosSubmitted=ref(false); const sosTime=ref('');
+    async function sendSOS(){
+      sosLoading.value=true;
+      try{await api('/citizen/sos',{method:'POST',body:JSON.stringify(sosForm)}); sosSubmitted.value=true; sosTime.value=new Date().toLocaleTimeString(); toast('SOS Alert sent!','info');}
+      catch(e){toast(e.message,'error');}
+      finally{sosLoading.value=false;}
+    }
+    const emergencyContacts=[
+      {name:'Kenya Police',desc:'General emergency',num:'999',icon:'bi-shield-fill',bg:'rgba(240,79,79,.12)',color:'var(--red)'},
+      {name:'Fire Brigade',desc:'Fire & rescue',num:'999',icon:'bi-fire',bg:'rgba(245,166,35,.12)',color:'var(--amber)'},
+      {name:'Ambulance',desc:'Medical emergency',num:'999',icon:'bi-heart-pulse-fill',bg:'rgba(34,197,94,.12)',color:'var(--green)'},
+      {name:'DCI',desc:'Directorate of Criminal Investigations',num:'0800 722 203',icon:'bi-search',bg:'rgba(0,194,168,.12)',color:'var(--teal)'},
+    ];
+
+    // Safety tips
+    const tips=ref([]); const tipCategory=ref('');
+    const tipCategories=['Home Security','Street Safety','Online Safety','Vehicle Safety','Emergency Contacts'];
+    const uniqueTipCats=computed(()=>[...new Set(tips.value.map(t=>t.category))]);
+    async function loadTips(){
+      loading.tips=true;
+      try{const p=tipCategory.value?'?category='+encodeURIComponent(tipCategory.value):''; tips.value=await api('/safety-tips'+p);}
+      catch(e){toast(e.message,'error');}
+      finally{loading.tips=false;}
+    }
+
+    // ═══ ANONYMOUS REPORT PAGE ═══
+    const anonSuccess=ref(false); const anonError=ref(''); const anonLoading=ref(false); const anonRefNum=ref('');
+    const anonForm=reactive({crime_type:'',county:'',location:'',incident_date:'',incident_time:'',description:'',suspect_info:'',witness_info:''});
+    async function submitAnon(){
+      if(!anonForm.crime_type||!anonForm.description.trim()||anonForm.description.length<20){anonError.value='Please select crime type and describe what happened (at least 20 characters)';return;}
+      anonLoading.value=true; anonError.value='';
+      try{const r=await fetch(API+'/citizen/reports/anonymous',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...anonForm,is_anonymous:true})});
+        const d=await r.json(); if(!r.ok)throw new Error(d.error||'Failed');
+        anonRefNum.value=d.reference_number; anonSuccess.value=true;}
+      catch(e){anonError.value=e.message;}
+      finally{anonLoading.value=false;}
+    }
+    function resetAnon(){Object.assign(anonForm,{crime_type:'',county:'',location:'',incident_date:'',incident_time:'',description:'',suspect_info:'',witness_info:''}); anonSuccess.value=false; anonRefNum.value='';}
+
+    // ═══ OFFICER ═══════════════════════════════════════════════════
+
+    const officerStats=reactive({total:0,pending:0,under_review:0,resolved:0,dismissed:0,my_cases:0,sos_active:0});
+    const odash=reactive({recent_reports:[],by_type:[],monthly_trend:[],by_status:[],by_county:[]});
+
+    const officerStatCards=computed(()=>[
+      {label:'Total Reports',val:officerStats.total,icon:'bi bi-folder2-open',ic:'ic-teal',color:'var(--teal)'},
+      {label:'Pending',val:officerStats.pending,icon:'bi bi-hourglass-split',ic:'ic-amber',color:'var(--amber)'},
+      {label:'Under Review',val:officerStats.under_review,icon:'bi bi-search',ic:'ic-blue',color:'var(--blue)'},
+      {label:'Resolved',val:officerStats.resolved,icon:'bi bi-check-circle-fill',ic:'ic-green',color:'var(--green)'},
+      {label:'My Cases',val:officerStats.my_cases,icon:'bi bi-person-fill',ic:'ic-purple',color:'var(--purple)'},
+      {label:'SOS Active',val:officerStats.sos_active,icon:'bi bi-exclamation-octagon-fill',ic:'ic-red',color:'var(--red)'},
+    ]);
+
+    const maxType =computed(()=>Math.max(1,...(odash.by_type?.map(t=>+t.cnt)||[1])));
+    const maxTrend=computed(()=>Math.max(1,...(odash.monthly_trend?.map(m=>+m.count)||[1])));
+
+    // Donut chart
+    const donutSegments=computed(()=>{
+      const t=officerStats.total||1;
+      const items=[
+        {val:officerStats.pending,color:'var(--amber)'},
+        {val:officerStats.under_review,color:'var(--blue)'},
+        {val:officerStats.resolved,color:'var(--green)'},
+        {val:officerStats.dismissed,color:'var(--text-3)'},
+      ];
+      const circ=2*Math.PI*50;
+      let offset=0;
+      return items.map(it=>{
+        const pct=it.val/t; const dash=circ*pct+' '+(circ*(1-pct));
+        const seg={...it,dash,offset:circ-offset*circ};
+        offset+=pct; return seg;
+      });
+    });
+    const donutLegend=computed(()=>[
+      {label:'Pending',val:officerStats.pending,color:'var(--amber)'},
+      {label:'Under Review',val:officerStats.under_review,color:'var(--blue)'},
+      {label:'Resolved',val:officerStats.resolved,color:'var(--green)'},
+      {label:'Dismissed',val:officerStats.dismissed,color:'var(--text-3)'},
+    ]);
+
+    async function loadOfficerDash(){
+      if(session.role!=='officer')return;
+      loading.odash=true;
+      try{const d=await api('/officer/dashboard'); Object.assign(odash,d); Object.assign(officerStats,d.stats);}
+      catch(e){toast(e.message,'error');}
+      finally{loading.odash=false;}
+    }
+
+    // Cases
+    const casesList=ref([]); const casesPag=reactive({page:1,pages:1,total:0});
+    const caseFilter=reactive({search:'',status:'',priority:'',crime_type:'',assigned_to_me:'',mine:false});
+    let srchTimer=null;
+    function debounceSearch(){clearTimeout(srchTimer);srchTimer=setTimeout(loadOfficerCases,400);}
+    const pageNums=computed(()=>{const{page,pages}=casesPag;const lo=Math.max(1,page-2),hi=Math.min(pages,page+2);const arr=[];for(let i=lo;i<=hi;i++)arr.push(i);return arr;});
+
+    async function loadOfficerCases(){
+      if(session.role!=='officer')return;
+      loading.cases=true;
+      try{
+        const p=new URLSearchParams({page:casesPag.page,limit:12,...caseFilter});
+        const d=await api('/officer/cases?'+p);
+        casesList.value=d.cases; casesPag.total=d.total; casesPag.pages=d.pages;
+      }catch(e){toast(e.message,'error');}
+      finally{loading.cases=false;}
+    }
+    function changePage(dir){casesPag.page=Math.max(1,Math.min(casesPag.pages,casesPag.page+dir));loadOfficerCases();}
+    function goPage(p){casesPag.page=p;loadOfficerCases();}
+
+    // Case detail
+    const caseModal=ref(false); const currentCase=ref(null); const currentCaseUpdates=ref([]);
+    const editCase=reactive({status:'',priority:'',assigned_officer_id:'',note:''});
+    const officersList=ref([]);
+
+    async function openOfficerCase(id){
+      try{
+        const d=await api('/officer/cases/'+id);
+        currentCase.value=d.case; currentCaseUpdates.value=d.updates||[];
+        Object.assign(editCase,{status:d.case.status,priority:d.case.priority,assigned_officer_id:d.case.assigned_officer_id||'',note:''});
+        if(!officersList.value.length) officersList.value=await api('/officers');
+        caseModal.value=true;
+      }catch(e){toast(e.message,'error');}
+    }
+
+    async function saveCase(){
+      loading.saveCase=true;
+      try{
+        await api('/officer/cases/'+currentCase.value.id,{method:'PUT',body:JSON.stringify({...editCase})});
+        toast('Case updated'); caseModal.value=false;
+        if(page.value==='officer-cases') loadOfficerCases();
+        if(page.value==='officer-dashboard') loadOfficerDash();
+      }catch(e){toast(e.message,'error');}
+      finally{loading.saveCase=false;}
+    }
+
+    // Analytics
+    const analytics=reactive({monthly:[],by_type:[],by_county:[],officers_performance:[],avg_resolution_days:0,by_hour:[],by_weekday:[]});
+    const maxMonthly=computed(()=>Math.max(1,...(analytics.monthly?.map(m=>+m.total)||[1])));
+    const resolvedPct=computed(()=>{const t=officerStats.total||1;return Math.round((officerStats.resolved/t)*100);});
+    const topCrime=computed(()=>analytics.by_type?.[0]?.crime_type||'—');
+    const hourlyBars=computed(()=>{
+      const max=Math.max(1,...(analytics.by_hour?.map(h=>+h.cnt)||[1]));
+      const hours=Array.from({length:24},(_,i)=>i);
+      return hours.map(h=>{const found=analytics.by_hour?.find(hh=>+hh.hour===h);const cnt=found?+found.cnt:0;return{hour:h,cnt,height:Math.max(3,cnt/max*62)};});
+    });
+
+    async function loadAnalytics(){
+      if(session.role!=='officer')return;
+      loading.analytics=true;
+      try{const d=await api('/officer/analytics'); Object.assign(analytics,d);}
+      catch(e){toast(e.message,'error');}
+      finally{loading.analytics=false;}
+    }
+
+    function loadAll(){
+      if(session.role==='citizen'){
+        if(page.value==='citizen-dashboard') loadCitizenDash();
+        if(page.value==='my-reports')        loadMyReports();
+        if(page.value==='safety-tips')       loadTips();
+      } else if(session.role==='officer'){
+        if(page.value==='officer-dashboard') loadOfficerDash();
+        if(page.value==='officer-cases')     loadOfficerCases();
+        if(page.value==='officer-analytics') loadAnalytics();
+      }
+    }
+
+    onMounted(()=>{
+      if(session.token && session.role) loadAll();
+    });
+
+    return {
+      session,isLoggedIn,anonMode,
+      loginMode,loginForm,loginError,loginLoading,showPw,sliderStyle,
+      demoCitizens,demoOfficers,setMode,doLogin,logout,goAnonymous,
+      anonForm,anonSuccess,anonError,anonLoading,anonRefNum,submitAnon,resetAnon,
+      page,nav,pageTitle,pageSubtitle,sidebarOpen,isMobile,
+      loading,nowStr,today,crimeTypes,counties,
+      statusLabel,statusBadge,cap,fmtDate,fmtDateTime,toasts,
+      // citizen
+      cdash,citizenStatCards,loadCitizenDash,
+      myReports,myRepFilter,loadMyReports,
+      repForm,repSuccess,repError,repLoading,lastRef,submitNamedReport,resetRepForm,
+      anonForm2,anonSuccess2,anonError2,anonLoading2,lastAnonRef,submitAnon2,resetAnonForm,
+      myRepModal,myRepDetail,viewMyReport,
+      sosForm,sosLoading,sosSubmitted,sosTime,sendSOS,emergencyContacts,
+      tips,tipCategory,tipCategories,uniqueTipCats,loadTips,
+      // officer
+      officerStats,odash,officerStatCards,maxType,maxTrend,
+      donutSegments,donutLegend,loadOfficerDash,
+      casesList,casesPag,caseFilter,pageNums,debounceSearch,loadOfficerCases,changePage,goPage,
+      caseModal,currentCase,currentCaseUpdates,editCase,officersList,openOfficerCase,saveCase,
+      analytics,maxMonthly,resolvedPct,topCrime,hourlyBars,loadAnalytics,
+    };
+  }
+}).mount('#app');
+</script>
+</body>
+</html>

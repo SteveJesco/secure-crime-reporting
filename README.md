@@ -1,5 +1,4 @@
 # 🛡️ Secure Crime Reporting System
-### Exact functional clone of the Figma prototype
 
 ---
 
